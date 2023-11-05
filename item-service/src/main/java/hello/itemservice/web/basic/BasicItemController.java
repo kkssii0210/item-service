@@ -3,8 +3,12 @@ package hello.itemservice.web.basic;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import hello.itemservice.domain.item.ItemRepositoryV2;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -20,9 +24,15 @@ import java.util.Optional;
 public class BasicItemController {
     private final ItemRepositoryV2 itemRepositoryV2;
     private final ItemRepository itemRepository;
+//    @GetMapping
+//    public String items(Model model) {
+//        List<Item> items = itemRepositoryV2.findAll();
+//        model.addAttribute("items",items);
+//        return "basic/items";
+//    }
     @GetMapping
-    public String items(Model model) {
-        List<Item> items = itemRepositoryV2.findAll();
+    public String list(@PageableDefault(size = 5) Pageable pageable, Model model) {
+        Page<Item> items = itemRepositoryV2.findAll(pageable);
         model.addAttribute("items",items);
         return "basic/items";
     }
@@ -71,5 +81,11 @@ public class BasicItemController {
     public String delete(@PathVariable Long itemId){
         itemRepositoryV2.deleteById(itemId);
         return "redirect:/basic/items";
+    }
+    @PostConstruct
+    public void init() {
+        for (int i = 0; i < 20; i++) {
+            itemRepositoryV2.save(new Item("item"+i,100+i,100));
+        }
     }
 }

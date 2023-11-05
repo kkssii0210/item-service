@@ -39,6 +39,16 @@
                 <td th:text="${item.quantity}">10</td>
             </tr>
             </tbody>
+            <nav>
+                <ul>
+                    <li th:if="${items.hasPrevious()}"><a th:href="@{|?page=${items.number - 1}|}">Prev</a></li>
+                    <li th:each="pageNum : ${#numbers.sequence(0, items.totalPages - 1)}">
+                        <a th:href="@{|?page=${pageNum}|}" th:text="${pageNum + 1}">1</a>
+                    </li>
+                    <li th:if="${items.hasNext()}"><a th:href="@{|?page=${items.number + 1}|}">Next</a></li>
+                </ul>
+            </nav>
+
         </table>
     </div>
 </div> <!-- /container -->
